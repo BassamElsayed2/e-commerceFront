@@ -10,6 +10,52 @@
   body {
     @apply font-euclid-circular-a font-normal text-base text-dark-3 relative z-1;
   }
+
+  /* RTL Support */
+  body.rtl {
+    direction: rtl;
+    text-align: right;
+  }
+
+  body.ltr {
+    direction: ltr;
+    text-align: left;
+  }
+
+  /* RTL specific adjustments */
+  .rtl .select-selected:after {
+    right: auto;
+    left: 1.125rem;
+  }
+
+  .rtl .select-items {
+    left: auto;
+    right: 0;
+  }
+
+  .rtl .dropdown {
+    left: auto;
+    right: 0;
+  }
+
+  /* Header RTL adjustments */
+  .rtl .header-logo {
+    order: 2;
+  }
+
+  .rtl .header-search {
+    order: 1;
+  }
+
+  .rtl .header-actions {
+    order: 0;
+  }
+
+  /* Language switcher RTL adjustments */
+  .rtl .language-switcher-dropdown {
+    right: auto;
+    left: 0;
+  }
 }
 
 @layer components {
@@ -35,21 +81,21 @@
 /* third-party libraries CSS */
 
 /* clears the ‘X’ from Internet Explorer */
-input[type='search']::-ms-clear {
+input[type="search"]::-ms-clear {
   display: none;
   width: 0;
   height: 0;
 }
-input[type='search']::-ms-reveal {
+input[type="search"]::-ms-reveal {
   display: none;
   width: 0;
   height: 0;
 }
 /* clears the ‘X’ from Chrome */
-input[type='search']::-webkit-search-decoration,
-input[type='search']::-webkit-search-cancel-button,
-input[type='search']::-webkit-search-results-button,
-input[type='search']::-webkit-search-results-decoration {
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
   display: none;
 }
 .custom-search {
@@ -117,7 +163,6 @@ input[type='search']::-webkit-search-results-decoration {
   @apply -mt-0.5;
 }
 
-
 .hero-carousel .swiper-pagination-bullet {
   @apply h-1 w-4 rounded-[11px] bg-[#DDD];
 }
@@ -173,9 +218,8 @@ input[type='search']::-webkit-search-results-decoration {
   @apply hidden;
 }
 
-
 .range-slider {
- @apply w-full !h-[4px] rounded-md bg-blue relative mb-3;
+  @apply w-full !h-[4px] rounded-md bg-blue relative mb-3;
 }
 
 .slider .thumb {

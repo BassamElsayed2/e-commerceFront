@@ -1,7 +1,9 @@
 import React from "react";
 import Image from "next/image";
+import { useLocale } from "next-intl";
 
 const PromoBanner = () => {
+  const locale = useLocale();
   return (
     <section className="overflow-hidden py-20">
       <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
@@ -32,7 +34,9 @@ const PromoBanner = () => {
           <Image
             src="/images/promo/promo-01.png"
             alt="promo img"
-            className="absolute bottom-0 right-4 lg:right-26 -z-1"
+            className={`absolute bottom-0 -z-1 ${
+              locale === "ar" ? "left-4 lg:left-26 " : "right-4 lg:right-26 "
+            }`}
             width={274}
             height={350}
           />
@@ -44,7 +48,9 @@ const PromoBanner = () => {
             <Image
               src="/images/promo/promo-02.png"
               alt="promo img"
-              className="absolute top-1/2 -translate-y-1/2 left-3 sm:left-10 -z-1"
+              className={`absolute top-1/2 -translate-y-1/2 ${
+                locale === "ar" ? "left-3 sm:left-10" : "right-3 sm:right-10"
+              } -z-1`}
               width={241}
               height={241}
             />
@@ -76,7 +82,9 @@ const PromoBanner = () => {
             <Image
               src="/images/promo/promo-03.png"
               alt="promo img"
-              className="absolute top-1/2 -translate-y-1/2 right-3 sm:right-8.5 -z-1"
+              className={`absolute top-1/2 -translate-y-1/2 ${
+                locale === "ar" ? "left-3 sm:left-8.5" : "right-3 sm:right-8.5"
+              } -z-1`}
               width={200}
               height={200}
             />

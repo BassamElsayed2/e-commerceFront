@@ -1,0 +1,59 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "home": "Home",
+    "shop": "Shop",
+    "cart": "Cart",
+    "account": "Account",
+    "search": "Search",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "profile": "Profile",
+    "orders": "Orders",
+    "wishlist": "Wishlist",
+    "contact": "Contact",
+    "about": "About",
+    "blog": "Blog"
+  },
+  "navigation": {
+    "menu": "Menu",
+    "categories": "Categories",
+    "brands": "Brands",
+    "deals": "Deals",
+    "newArrivals": "New Arrivals",
+    "bestSellers": "Best Sellers"
+  },
+  "header": {
+    "allCategories": "All Categories",
+    "desktop": "Desktop",
+    "laptop": "Laptop",
+    "monitor": "Monitor",
+    "phone": "Phone",
+    "watch": "Watch",
+    "mouse": "Mouse",
+    "tablet": "Tablet",
+    "searchPlaceholder": "I am shopping for...",
+    "signIn": "Sign In",
+    "recentlyViewed": "Recently Viewed"
+  },
+  "menu": {
+    "popular": "Popular",
+    "shop": "Shop",
+    "contact": "Contact",
+    "pages": "Pages",
+    "blogs": "Blogs",
+    "shopWithSidebar": "Shop With Sidebar",
+    "shopWithoutSidebar": "Shop Without Sidebar",
+    "checkout": "Checkout",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "myAccount": "My Account",
+    "error": "Error",
+    "mailSuccess": "Mail Success",
+    "blogGridWithSidebar": "Blog Grid with sidebar",
+    "blogGrid": "Blog Grid",
+    "blogDetailsWithSidebar": "Blog details with sidebar",
+    "blogDetails": "Blog details"
+  }
+}

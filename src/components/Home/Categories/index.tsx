@@ -8,8 +8,10 @@ import Image from "next/image";
 import "swiper/css/navigation";
 import "swiper/css";
 import SingleItem from "./SingleItem";
+import { useLocale } from "next-intl";
 
 const Categories = () => {
+  const locale = useLocale();
   const sliderRef = useRef(null);
 
   const handlePrev = useCallback(() => {
@@ -77,7 +79,11 @@ const Categories = () => {
               </h2>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div
+              className={`flex items-center gap-3 ${
+                locale === "ar" ? "flex-row-reverse" : ""
+              }`}
+            >
               <button onClick={handlePrev} className="swiper-button-prev">
                 <svg
                   className="fill-current"

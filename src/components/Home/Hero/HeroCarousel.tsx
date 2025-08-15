@@ -7,8 +7,10 @@ import "swiper/css/pagination";
 import "swiper/css";
 
 import Image from "next/image";
+import { useLocale } from "next-intl";
 
 const HeroCarousal = () => {
+  const locale = useLocale();
   return (
     <Swiper
       spaceBetween={30}
@@ -24,8 +26,14 @@ const HeroCarousal = () => {
       className="hero-carousel"
     >
       <SwiperSlide>
-        <div className="flex items-center pt-6 sm:pt-0 flex-col-reverse sm:flex-row">
-          <div className="max-w-[394px] py-10 sm:py-15 lg:py-24.5 pl-4 sm:pl-7.5 lg:pl-12.5">
+        <div className="flex items-center pt-6 sm:pt-0 flex-col-reverse sm:flex-row ">
+          <div
+            className={`max-w-[394px] py-10 sm:py-15 lg:py-24.5 ${
+              locale === "en"
+                ? "pl-4 sm:pl-7.5 lg:pl-12.5"
+                : "pr-4 sm:pr-7.5 lg:pr-12.5"
+            }`}
+          >
             <div className="flex items-center gap-4 mb-7.5 sm:mb-10">
               <span className="block font-semibold text-heading-3 sm:text-heading-1 text-blue">
                 30%
@@ -42,7 +50,8 @@ const HeroCarousal = () => {
             </h1>
 
             <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi at ipsum at risus euismod lobortis in
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi at
+              ipsum at risus euismod lobortis in
             </p>
 
             <a
@@ -66,7 +75,13 @@ const HeroCarousal = () => {
       <SwiperSlide>
         {" "}
         <div className="flex items-center pt-6 sm:pt-0 flex-col-reverse sm:flex-row">
-          <div className="max-w-[394px] py-10 sm:py-15 lg:py-26 pl-4 sm:pl-7.5 lg:pl-12.5">
+          <div
+            className={`max-w-[394px] py-10 sm:py-15 lg:py-26 ${
+              locale === "en"
+                ? "pl-4 sm:pl-7.5 lg:pl-12.5"
+                : "pr-4 sm:pr-7.5 lg:pr-12.5"
+            }`}
+          >
             <div className="flex items-center gap-4 mb-7.5 sm:mb-10">
               <span className="block font-semibold text-heading-3 sm:text-heading-1 text-blue">
                 30%

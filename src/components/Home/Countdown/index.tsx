@@ -1,8 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { useLocale } from "next-intl";
 
 const CounDown = () => {
+  const locale = useLocale();
   const [days, setDays] = useState(0);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
@@ -122,7 +124,9 @@ const CounDown = () => {
           <Image
             src="/images/countdown/countdown-01.png"
             alt="product"
-            className="hidden lg:block absolute right-4 xl:right-33 bottom-4 xl:bottom-10 -z-1"
+            className={`hidden lg:block absolute ${
+              locale === "ar" ? "left-4 xl:left-33" : "right-4 xl:right-33"
+            } bottom-4 xl:bottom-10 -z-1`}
             width={411}
             height={376}
           />
