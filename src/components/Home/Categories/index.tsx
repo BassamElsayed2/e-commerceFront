@@ -9,6 +9,8 @@ import "swiper/css/navigation";
 import "swiper/css";
 import SingleItem from "./SingleItem";
 import { useLocale } from "next-intl";
+import { useQuery } from "@tanstack/react-query";
+import { getCategories } from "@/services/apiCat";
 
 const Categories = () => {
   const locale = useLocale();
@@ -29,6 +31,15 @@ const Categories = () => {
       sliderRef.current.swiper.init();
     }
   }, []);
+
+  const {
+    data: categories,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategories,
+  });
 
   return (
     <section className="overflow-hidden pt-17.5">
@@ -72,10 +83,10 @@ const Categories = () => {
                     </clipPath>
                   </defs>
                 </svg>
-                Categories
+                {locale === "ar" ? "الفئات" : "Categories"}
               </span>
               <h2 className="font-semibold text-xl xl:text-heading-5 text-dark">
-                Browse by Category
+                {locale === "ar" ? "تصفح حسب الفئة" : "Browse by Category"}
               </h2>
             </div>
 
@@ -140,7 +151,7 @@ const Categories = () => {
               },
             }}
           >
-            {data.map((item, key) => (
+            {categories?.map((item, key) => (
               <SwiperSlide key={key}>
                 <SingleItem item={item} />
               </SwiperSlide>

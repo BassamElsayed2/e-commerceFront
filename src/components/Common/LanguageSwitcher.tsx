@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "@/app/i18n/navigation";
+import { useSearchParams } from "next/navigation";
 import { routing } from "@/app/i18n/routing";
 import { useLocale } from "next-intl";
 
@@ -8,6 +9,7 @@ const LanguageSwitcher = () => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const currentLocale = useLocale();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -29,7 +31,12 @@ const LanguageSwitcher = () => {
   }, []);
 
   const handleLanguageChange = (locale: string) => {
-    router.replace(pathname, { locale });
+    // Preserve search params when changing language
+    const params = new URLSearchParams(searchParams.toString());
+    const queryString = params.toString();
+    const newPath = queryString ? `${pathname}?${queryString}` : pathname;
+
+    router.replace(newPath, { locale });
     setIsOpen(false);
   };
 

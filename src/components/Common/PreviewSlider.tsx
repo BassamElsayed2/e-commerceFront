@@ -25,6 +25,17 @@ const PreviewSliderModal = () => {
     sliderRef.current.swiper.slideNext();
   }, []);
 
+  // Get product images
+  const productImages = data?.imgs?.previews ||
+    (Array.isArray(data?.image_url) ? data.image_url : [data?.image_url]) || [
+      "/images/products/product-1-bg-1.png",
+    ];
+
+  // Don't render if no data
+  if (!data || !data.id) {
+    return null;
+  }
+
   return (
     <div
       className={`preview-slider w-full h-screen  z-999999 inset-0 flex justify-center items-center bg-[#000000F2] bg-opacity-70 ${
@@ -96,16 +107,21 @@ const PreviewSliderModal = () => {
       </div>
 
       <Swiper ref={sliderRef} slidesPerView={1} spaceBetween={20}>
-        <SwiperSlide>
-          <div className="flex justify-center items-center">
-            <Image
-              src={"/images/products/product-2-bg-1.png"}
-              alt={"product image"}
-              width={450}
-              height={450}
-            />
-          </div>
-        </SwiperSlide>
+        {productImages.map((img, index) => (
+          <SwiperSlide key={index}>
+            <div className="flex justify-center items-center">
+              <Image
+                src={img || "/images/products/product-1-bg-1.png"}
+                alt={`${data.name_en || "Product"} image ${index + 1}`}
+                width={450}
+                height={450}
+                onError={(e) => {
+                  e.currentTarget.src = "/images/products/product-1-bg-1.png";
+                }}
+              />
+            </div>
+          </SwiperSlide>
+        ))}
       </Swiper>
     </div>
   );

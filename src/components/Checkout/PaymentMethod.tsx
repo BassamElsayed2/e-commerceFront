@@ -1,71 +1,45 @@
-import React, { useState } from "react";
+"use client";
+import React from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
-const PaymentMethod = () => {
-  const [payment, setPayment] = useState("bank");
+interface PaymentMethodProps {
+  selectedPayment: string;
+  onPaymentChange: (method: string) => void;
+}
+
+const PaymentMethod = ({
+  selectedPayment,
+  onPaymentChange,
+}: PaymentMethodProps) => {
+  const t = useTranslations("checkout");
+
   return (
     <div className="bg-white shadow-1 rounded-[10px] mt-7.5">
       <div className="border-b border-gray-3 py-5 px-4 sm:px-8.5">
-        <h3 className="font-medium text-xl text-dark">Payment Method</h3>
+        <h3 className="font-medium text-xl text-dark">{t("paymentMethod")}</h3>
       </div>
 
       <div className="p-4 sm:p-8.5">
         <div className="flex flex-col gap-3">
+          {/* Cash on Delivery - الخيار الوحيد المتاح */}
           <label
-            htmlFor="bank"
+            htmlFor="cod"
             className="flex cursor-pointer select-none items-center gap-4"
           >
             <div className="relative">
               <input
-                type="checkbox"
-                name="bank"
-                id="bank"
+                type="radio"
+                name="payment"
+                id="cod"
+                value="cod"
                 className="sr-only"
-                onChange={() => setPayment("bank")}
+                checked={selectedPayment === "cod"}
+                onChange={() => onPaymentChange("cod")}
               />
               <div
                 className={`flex h-4 w-4 items-center justify-center rounded-full ${
-                  payment === "bank"
-                    ? "border-4 border-blue"
-                    : "border border-gray-4"
-                }`}
-              ></div>
-            </div>
-
-            <div
-              className={`rounded-md border-[0.5px] py-3.5 px-5 ease-out duration-200 hover:bg-gray-2 hover:border-transparent hover:shadow-none ${
-                payment === "bank"
-                  ? "border-transparent bg-gray-2"
-                  : " border-gray-4 shadow-1"
-              }`}
-            >
-              <div className="flex items-center">
-                <div className="pr-2.5">
-                  <Image src="/images/checkout/bank.svg" alt="bank" width={29} height={12}/>
-                </div>
-
-                <div className="border-l border-gray-4 pl-2.5">
-                  <p>Direct bank transfer</p>
-                </div>
-              </div>
-            </div>
-          </label>
-
-          <label
-            htmlFor="cash"
-            className="flex cursor-pointer select-none items-center gap-4"
-          >
-            <div className="relative">
-              <input
-                type="checkbox"
-                name="cash"
-                id="cash"
-                className="sr-only"
-                onChange={() => setPayment("cash")}
-              />
-              <div
-                className={`flex h-4 w-4 items-center justify-center rounded-full ${
-                  payment === "cash"
+                  selectedPayment === "cod"
                     ? "border-4 border-blue"
                     : "border border-gray-4"
                 }`}
@@ -74,61 +48,39 @@ const PaymentMethod = () => {
 
             <div
               className={`rounded-md border-[0.5px] py-3.5 px-5 ease-out duration-200 hover:bg-gray-2 hover:border-transparent hover:shadow-none min-w-[240px] ${
-                payment === "cash"
+                selectedPayment === "cod"
                   ? "border-transparent bg-gray-2"
                   : " border-gray-4 shadow-1"
               }`}
             >
               <div className="flex items-center">
-                <div className="pr-2.5">
-                  <Image src="/images/checkout/cash.svg" alt="cash" width={21} height={21} />
+                <div className="ps-2.5 pl-2">
+                  <Image
+                    src="/images/checkout/cash.svg"
+                    alt="cash"
+                    width={21}
+                    height={21}
+                  />
                 </div>
 
-                <div className="border-l border-gray-4 pl-2.5">
-                  <p>Cash on delivery</p>
+                <div className="border-s border-gray-4 ps-2.5">
+                  <p>{t("cashOnDelivery")}</p>
                 </div>
               </div>
             </div>
           </label>
 
-          <label
-            htmlFor="paypal"
-            className="flex cursor-pointer select-none items-center gap-4"
-          >
-            <div className="relative">
-              <input
-                type="checkbox"
-                name="paypal"
-                id="paypal"
-                className="sr-only"
-                onChange={() => setPayment("paypal")}
-              />
-              <div
-                className={`flex h-4 w-4 items-center justify-center rounded-full ${
-                  payment === "paypal"
-                    ? "border-4 border-blue"
-                    : "border border-gray-4"
-                }`}
-              ></div>
-            </div>
-            <div
-              className={`rounded-md border-[0.5px] py-3.5 px-5 ease-out duration-200 hover:bg-gray-2 hover:border-transparent hover:shadow-none min-w-[240px] ${
-                payment === "paypal"
-                  ? "border-transparent bg-gray-2"
-                  : " border-gray-4 shadow-1"
-              }`}
-            >
-              <div className="flex items-center">
-                <div className="pr-2.5">
-                  <Image src="/images/checkout/paypal.svg" alt="paypal" width={75} height={20}/>
-                </div>
-
-                <div className="border-l border-gray-4 pl-2.5">
-                  <p>Paypal</p>
-                </div>
-              </div>
-            </div>
-          </label>
+          {/* معلومات إضافية حول الدفع عند الاستلام */}
+          <div className="mt-3 p-4 bg-gray-1 rounded-md border border-gray-3">
+            <p className="text-sm text-dark-4">
+              {selectedPayment === "cod" && (
+                <span>
+                  ستقوم بدفع قيمة الطلب نقداً عند استلام المنتجات من المندوب.
+                  يرجى التأكد من توفر المبلغ كاملاً.
+                </span>
+              )}
+            </p>
+          </div>
         </div>
       </div>
     </div>

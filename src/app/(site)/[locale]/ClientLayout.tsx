@@ -11,6 +11,8 @@ import Footer from "@/components/Footer";
 import { CartModalProvider } from "@/app/context/CartSidebarModalContext";
 import { ModalProvider } from "@/app/context/QuickViewModalContext";
 import { PreviewSliderProvider } from "@/app/context/PreviewSliderContext";
+import { Providers } from "@/app/context/QueryProvider";
+import { Toaster } from "react-hot-toast";
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -29,21 +31,24 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
   return (
     <>
-      <ReduxProvider>
-        <CartModalProvider>
-          <ModalProvider>
-            <PreviewSliderProvider>
-              <Header />
-              {children}
-              <QuickViewModal />
-              <CartSidebarModal />
-              <PreviewSliderModal />
-            </PreviewSliderProvider>
-          </ModalProvider>
-        </CartModalProvider>
-      </ReduxProvider>
+      <Providers>
+        <ReduxProvider>
+          <CartModalProvider>
+            <ModalProvider>
+              <PreviewSliderProvider>
+                <Header />
+                {children}
+                <QuickViewModal />
+                <CartSidebarModal />
+                <PreviewSliderModal />
+              </PreviewSliderProvider>
+            </ModalProvider>
+          </CartModalProvider>
+        </ReduxProvider>
+      </Providers>
       <ScrollToTop />
       <Footer />
+      <Toaster position="top-right" />
     </>
   );
 }

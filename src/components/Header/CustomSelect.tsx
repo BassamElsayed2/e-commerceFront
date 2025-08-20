@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 
-const CustomSelect = ({ options }) => {
+const CustomSelect = ({ options, isLoading = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(options[0]);
+  const router = useRouter();
+  const locale = useLocale();
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -11,7 +15,21 @@ const CustomSelect = ({ options }) => {
   const handleOptionClick = (option) => {
     setSelectedOption(option);
     toggleDropdown();
+
+    // Navigate to shop page with category filter
+    if (option.value !== "0") {
+      router.push(`/${locale}/shop-without-sidebar?category=${option.value}`);
+    } else {
+      router.push(`/${locale}/shop-without-sidebar`);
+    }
   };
+
+  // Update selected option when options change
+  useEffect(() => {
+    if (options && options.length > 0) {
+      setSelectedOption(options[0]);
+    }
+  }, [options]);
 
   useEffect(() => {
     // closing modal while clicking outside
@@ -31,14 +49,17 @@ const CustomSelect = ({ options }) => {
   }, []);
 
   return (
-    <div className="dropdown-content custom-select relative" style={{ width: "200px" }}>
+    <div
+      className="dropdown-content custom-select relative"
+      style={{ width: "200px" }}
+    >
       <div
         className={`select-selected whitespace-nowrap ${
           isOpen ? "select-arrow-active" : ""
-        }`}
-        onClick={toggleDropdown}
+        } ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+        onClick={isLoading ? undefined : toggleDropdown}
       >
-        {selectedOption.label}
+        {isLoading ? "جاري التحميل..." : selectedOption.label}
       </div>
       <div className={`select-items ${isOpen ? "" : "select-hide"}`}>
         {options.slice(1, -1).map((option, index) => (

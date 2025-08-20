@@ -1,10 +1,37 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ProductItem from "@/components/Common/ProductItem";
 import shopData from "@/components/Shop/shopData";
+import {
+  getProducts,
+  getLimitedTimeOfferProducts,
+} from "@/services/apiProducts";
+import { useQuery } from "@tanstack/react-query";
+import { useLocale } from "next-intl";
 
 const NewArrival = () => {
+  const locale = useLocale();
+  const {
+    data: products,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["products"],
+    queryFn: getProducts,
+  });
+
+  const {
+    data: limitedTimeProducts,
+    isLoading: limitedTimeLoading,
+    error: limitedTimeError,
+  } = useQuery({
+    queryKey: ["limitedTimeOfferProducts"],
+    queryFn: getLimitedTimeOfferProducts,
+  });
+
   return (
     <section className="overflow-hidden pt-15">
       <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
@@ -31,28 +58,30 @@ const NewArrival = () => {
                   strokeLinecap="round"
                 />
               </svg>
-              This Week’s
+              {locale === "ar" ? "هذا الأسبوع" : "This Week’s"}
             </span>
             <h2 className="font-semibold text-xl xl:text-heading-5 text-dark">
-              New Arrivals
+              {locale === "ar" ? "المنتجات الجديدة" : "New Arrivals"}
             </h2>
           </div>
 
           <Link
-            href="/shop-with-sidebar"
+            href={`/${locale}/shop-without-sidebar`}
             className="inline-flex font-medium text-custom-sm py-2.5 px-7 rounded-md border-gray-3 border bg-gray-1 text-dark ease-out duration-200 hover:bg-dark hover:text-white hover:border-transparent"
           >
-            View All
+            {locale === "ar" ? "عرض الكل" : "View All"}
           </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-7.5 gap-y-9">
           {/* <!-- New Arrivals item --> */}
-          {shopData.map((item, key) => (
+          {products?.slice(-8).map((item, key) => (
             <ProductItem item={item} key={key} />
           ))}
         </div>
       </div>
+
+      {/* <!-- Limited Time Offers Section --> */}
     </section>
   );
 };

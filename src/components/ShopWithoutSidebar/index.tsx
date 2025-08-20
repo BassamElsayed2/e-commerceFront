@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Breadcrumb from "../Common/Breadcrumb";
 
 import SingleGridItem from "../Shop/SingleGridItem";
@@ -7,36 +7,587 @@ import SingleListItem from "../Shop/SingleListItem";
 import CustomSelect from "../ShopWithSidebar/CustomSelect";
 
 import shopData from "../Shop/shopData";
+import { useLocale } from "next-intl";
+import { useQuery } from "@tanstack/react-query";
+import {
+  getProducts,
+  getLimitedTimeOfferProducts,
+} from "@/services/apiProducts";
+import { getCategories } from "@/services/apiCat";
+import { useSearchParams } from "next/navigation";
 
 const ShopWithoutSidebar = () => {
+  const locale = useLocale();
+  const searchParams = useSearchParams();
   const [productStyle, setProductStyle] = useState("grid");
+  const [showFilters, setShowFilters] = useState(false);
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState("latest");
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
+
+  // Get category and filter from URL params
+  const categoryFromUrl = searchParams.get("category");
+  const filterFromUrl = searchParams.get("filter");
+
+  const {
+    data: products,
+    isLoading: productsLoading,
+    error: productsError,
+  } = useQuery({
+    queryKey: ["products"],
+    queryFn: getProducts,
+  });
+
+  const {
+    data: limitedTimeProducts,
+    isLoading: limitedTimeLoading,
+    error: limitedTimeError,
+  } = useQuery({
+    queryKey: ["limitedTimeOfferProducts"],
+    queryFn: getLimitedTimeOfferProducts,
+  });
+
+  const {
+    data: categories,
+    isLoading: categoriesLoading,
+    error: categoriesError,
+  } = useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategories,
+  });
 
   const options = [
-    { label: "Latest Products", value: "0" },
-    { label: "Best Selling", value: "1" },
-    { label: "Old Products", value: "2" },
+    {
+      label: locale === "ar" ? "أحدث المنتجات" : "Latest Products",
+      value: "latest",
+    },
+    {
+      label: locale === "ar" ? "الأقدم" : "Oldest Products",
+      value: "oldest",
+    },
+    {
+      label: locale === "ar" ? "الأكثر مبيعاً" : "Best Selling",
+      value: "best-selling",
+    },
+    {
+      label:
+        locale === "ar" ? "السعر: من الأقل إلى الأعلى" : "Price: Low to High",
+      value: "price-low",
+    },
+    {
+      label:
+        locale === "ar" ? "السعر: من الأعلى إلى الأقل" : "Price: High to Low",
+      value: "price-high",
+    },
   ];
+
+  // Items per page options
+  const itemsPerPageOptions = [
+    { label: "12", value: 12 },
+    { label: "24", value: 24 },
+    { label: "36", value: 36 },
+    { label: "48", value: 48 },
+  ];
+
+  // Calculate price range from actual products
+  const priceRangeFromData = useMemo(() => {
+    if (!products || products.length === 0) return { min: 0, max: 1000 };
+
+    const prices = products.map(
+      (product) => product.offer_price || product.price
+    );
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+
+    return { min: Math.floor(min), max: Math.ceil(max) };
+  }, [products]);
+
+  // Initialize price range with actual data
+  React.useEffect(() => {
+    if (priceRangeFromData.min !== 0 || priceRangeFromData.max !== 1000) {
+      setPriceRange(priceRangeFromData);
+    }
+  }, [priceRangeFromData]);
+
+  // Set category filter from URL on component mount
+  useEffect(() => {
+    if (categoryFromUrl) {
+      setSelectedCategories([categoryFromUrl]);
+    }
+  }, [categoryFromUrl]);
+
+  // Filter and sort products
+  const filteredAndSortedProducts = useMemo(() => {
+    // Use limited time products if filter is set
+    const productsToFilter =
+      filterFromUrl === "limited-offers" && limitedTimeProducts
+        ? limitedTimeProducts
+        : products;
+
+    if (!productsToFilter) return [];
+
+    let filtered = productsToFilter.filter((product) => {
+      // Price filter
+      const price = product.offer_price || product.price;
+      if (price < priceRange.min || price > priceRange.max) return false;
+
+      // Category filter (if any categories are selected)
+      if (selectedCategories.length > 0) {
+        if (!selectedCategories.includes(product.category_id?.toString() || ""))
+          return false;
+      }
+
+      return true;
+    });
+
+    // Sort products
+    switch (sortBy) {
+      case "price-low":
+        filtered.sort(
+          (a, b) => (a.offer_price || a.price) - (b.offer_price || b.price)
+        );
+        break;
+      case "price-high":
+        filtered.sort(
+          (a, b) => (b.offer_price || b.price) - (a.offer_price || a.price)
+        );
+        break;
+      case "best-selling":
+        filtered.sort(
+          (a, b) => (b.is_best_seller ? 1 : 0) - (a.is_best_seller ? 1 : 0)
+        );
+        break;
+      case "oldest":
+        filtered.sort((a, b) => a.id - b.id);
+        break;
+      default: // latest
+        filtered.sort((a, b) => b.id - a.id);
+        break;
+    }
+
+    return filtered;
+  }, [products, priceRange, selectedCategories, sortBy]);
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredAndSortedProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentProducts = filteredAndSortedProducts.slice(startIndex, endIndex);
+
+  // Reset to first page when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [priceRange, selectedCategories, sortBy, itemsPerPage]);
+
+  const handleCategoryToggle = (categoryId: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(categoryId)
+        ? prev.filter((id) => id !== categoryId)
+        : [...prev, categoryId]
+    );
+  };
+
+  const clearAllFilters = () => {
+    setPriceRange(priceRangeFromData);
+    setSelectedCategories([]);
+    setSortBy("latest");
+    setCurrentPage(1);
+  };
+
+  // Pagination handlers
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+
+    if (totalPages <= maxVisiblePages) {
+      // Show all pages if total is small
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Show pages around current page
+      let start = Math.max(1, currentPage - 2);
+      let end = Math.min(totalPages, start + maxVisiblePages - 1);
+
+      if (end - start < maxVisiblePages - 1) {
+        start = Math.max(1, end - maxVisiblePages + 1);
+      }
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+    }
+
+    return pages;
+  };
+
+  // Get category counts for display
+  const getCategoryCounts = () => {
+    if (!products || !categories) return [];
+
+    return categories
+      .map((category) => {
+        const count = products.filter(
+          (product) =>
+            product.category_id?.toString() === category.id?.toString()
+        ).length;
+
+        return {
+          id: category.id?.toString() || "",
+          name: locale === "ar" ? category.name_ar : category.name_en,
+          count,
+        };
+      })
+      .filter((cat) => cat.count > 0); // Only show categories with products
+  };
+
+  const categoryCounts = getCategoryCounts();
+
+  // Get selected category name for display
+  const getSelectedCategoryName = () => {
+    if (!categoryFromUrl || !categories) return null;
+
+    const category = categories.find(
+      (cat) => cat.id?.toString() === categoryFromUrl
+    );
+    return category
+      ? locale === "ar"
+        ? category.name_ar
+        : category.name_en
+      : null;
+  };
+
+  const selectedCategoryName = getSelectedCategoryName();
 
   return (
     <>
       <Breadcrumb
-        title={"Explore All Products"}
-        pages={["shop", "/", "shop without sidebar"]}
+        title={
+          filterFromUrl === "limited-offers"
+            ? locale === "ar"
+              ? "العروض المحدودة"
+              : "Limited Time Offers"
+            : selectedCategoryName
+            ? locale === "ar"
+              ? `المنتجات - ${selectedCategoryName}`
+              : `Products - ${selectedCategoryName}`
+            : locale === "ar"
+            ? "المنتجات"
+            : "Explore All Products"
+        }
+        pages={[
+          locale === "ar" ? "المتجر" : "shop",
+          "/",
+          filterFromUrl === "limited-offers"
+            ? locale === "ar"
+              ? "العروض المحدودة"
+              : "Limited Offers"
+            : locale === "ar"
+            ? "المتجر بدون جانب"
+            : "shop without sidebar",
+        ]}
       />
       <section className="overflow-hidden relative pb-20 pt-5 lg:pt-20 xl:pt-28 bg-[#f3f4f6]">
         <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
           <div className="flex gap-7.5">
             {/* // <!-- Content Start --> */}
             <div className="w-full">
+              {/* Category Filter Message */}
+              {selectedCategoryName && (
+                <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <svg
+                        className="w-5 h-5 text-blue-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                        />
+                      </svg>
+                      <span className="text-blue-800 font-medium">
+                        {locale === "ar"
+                          ? `عرض المنتجات في فئة: ${selectedCategoryName}`
+                          : `Showing products in category: ${selectedCategoryName}`}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setSelectedCategories([]);
+                        window.history.pushState(
+                          {},
+                          "",
+                          `/${locale}/shop-without-sidebar`
+                        );
+                      }}
+                      className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    >
+                      {locale === "ar" ? "إزالة التصفية" : "Clear Filter"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Limited Time Offers Filter Message */}
+              {filterFromUrl === "limited-offers" && (
+                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <svg
+                        className="w-5 h-5 text-red-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <span className="text-red-800 font-medium">
+                        {locale === "ar"
+                          ? "عرض المنتجات ذات العروض المحدودة"
+                          : "Showing limited time offer products"}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        window.history.pushState(
+                          {},
+                          "",
+                          `/${locale}/shop-without-sidebar`
+                        );
+                      }}
+                      className="text-red-600 hover:text-red-800 text-sm font-medium"
+                    >
+                      {locale === "ar" ? "إزالة التصفية" : "Clear Filter"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Filter Toggle Button */}
+              <div className="mb-4">
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center gap-2 bg-white shadow-1 rounded-lg px-4 py-2 text-dark hover:bg-gray-50 transition-colors"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                    />
+                  </svg>
+                  {locale === "ar" ? "المرشحات" : "Filters"}
+                  <span className="text-blue">
+                    {selectedCategories.length > 0 ||
+                    priceRange.min > priceRangeFromData.min ||
+                    priceRange.max < priceRangeFromData.max
+                      ? "●"
+                      : ""}
+                  </span>
+                </button>
+              </div>
+
+              {/* Filter Panel */}
+              {showFilters && (
+                <div className="bg-white shadow-1 rounded-lg p-6 mb-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-dark">
+                      {locale === "ar" ? "المرشحات" : "Filters"}
+                    </h3>
+                    <button
+                      onClick={clearAllFilters}
+                      className="text-blue hover:text-blue-dark transition-colors"
+                    >
+                      {locale === "ar" ? "مسح الكل" : "Clear All"}
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* Price Range */}
+                    <div>
+                      <h4 className="font-medium text-dark mb-3">
+                        {locale === "ar" ? "نطاق السعر" : "Price Range"}
+                      </h4>
+                      <div className="space-y-2">
+                        <div className="flex gap-2">
+                          <input
+                            type="number"
+                            value={priceRange.min}
+                            onChange={(e) =>
+                              setPriceRange((prev) => ({
+                                ...prev,
+                                min: Number(e.target.value),
+                              }))
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                            placeholder={locale === "ar" ? "من" : "Min"}
+                            min={priceRangeFromData.min}
+                            max={priceRangeFromData.max}
+                          />
+                          <input
+                            type="number"
+                            value={priceRange.max}
+                            onChange={(e) =>
+                              setPriceRange((prev) => ({
+                                ...prev,
+                                max: Number(e.target.value),
+                              }))
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                            placeholder={locale === "ar" ? "إلى" : "Max"}
+                            min={priceRangeFromData.min}
+                            max={priceRangeFromData.max}
+                          />
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {locale === "ar" ? "النطاق:" : "Range:"} $
+                          {priceRangeFromData.min} - ${priceRangeFromData.max}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Categories */}
+                    <div>
+                      <h4 className="font-medium text-dark mb-3">
+                        {locale === "ar" ? "الفئات" : "Categories"}
+                      </h4>
+                      <div className="space-y-2 max-h-40 overflow-y-auto">
+                        {categoriesLoading ? (
+                          <div className="text-sm text-gray-500">
+                            {locale === "ar" ? "جاري التحميل..." : "Loading..."}
+                          </div>
+                        ) : categoryCounts.length > 0 ? (
+                          categoryCounts.map((category) => (
+                            <label
+                              key={category.id}
+                              className="flex items-center gap-2 cursor-pointer"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={selectedCategories.includes(
+                                  category.id
+                                )}
+                                onChange={() =>
+                                  handleCategoryToggle(category.id)
+                                }
+                                className="rounded border-gray-300 text-blue focus:ring-blue"
+                              />
+                              <span className="text-sm text-dark">
+                                {category.name} ({category.count})
+                              </span>
+                            </label>
+                          ))
+                        ) : (
+                          <div className="text-sm text-gray-500">
+                            {locale === "ar" ? "لا توجد فئات" : "No categories"}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Sort Options */}
+                    <div>
+                      <h4 className="font-medium text-dark mb-3">
+                        {locale === "ar" ? "ترتيب حسب" : "Sort By"}
+                      </h4>
+                      <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                      >
+                        {options.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="rounded-lg bg-white shadow-1 pl-3 pr-2.5 py-2.5 mb-6">
                 <div className="flex items-center justify-between">
                   {/* <!-- top bar left --> */}
                   <div className="flex flex-wrap items-center gap-4">
-                    <CustomSelect options={options} />
+                    {/* Items per page selector */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-600">
+                        {locale === "ar" ? "عرض" : "Show"}:
+                      </span>
+                      <select
+                        value={itemsPerPage}
+                        onChange={(e) =>
+                          setItemsPerPage(Number(e.target.value))
+                        }
+                        className="px-2 py-1 border border-gray-300 rounded text-sm"
+                      >
+                        {itemsPerPageOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
                     <p>
-                      Showing <span className="text-dark">9 of 50</span>{" "}
-                      Products
+                      {locale === "ar" ? "عرض" : "Showing"}{" "}
+                      <span className="text-dark">
+                        {startIndex + 1}-
+                        {Math.min(endIndex, filteredAndSortedProducts.length)}
+                      </span>{" "}
+                      {locale === "ar" ? "من" : "of"}{" "}
+                      <span className="text-dark">
+                        {filteredAndSortedProducts.length}
+                      </span>{" "}
+                      {locale === "ar" ? "منتجات" : "Products"}
+                      {products &&
+                        products.length !==
+                          filteredAndSortedProducts.length && (
+                          <span className="text-gray-500 ml-2">
+                            {locale === "ar" ? "من أصل" : "of"}{" "}
+                            {products.length}
+                          </span>
+                        )}
                     </p>
                   </div>
 
@@ -129,132 +680,115 @@ const ShopWithoutSidebar = () => {
                     : "flex flex-col gap-7.5"
                 }`}
               >
-                {shopData.map((item, key) =>
-                  productStyle === "grid" ? (
-                    <SingleGridItem item={item} key={key} />
-                  ) : (
-                    <SingleListItem item={item} key={key} />
+                {productsLoading ? (
+                  <div className="col-span-full text-center py-10">
+                    <div className="text-gray-500">
+                      {locale === "ar"
+                        ? "جاري تحميل المنتجات..."
+                        : "Loading products..."}
+                    </div>
+                  </div>
+                ) : filteredAndSortedProducts.length === 0 ? (
+                  <div className="col-span-full text-center py-10">
+                    <div className="text-gray-500">
+                      {selectedCategoryName
+                        ? locale === "ar"
+                          ? `لا توجد منتجات في فئة "${selectedCategoryName}"`
+                          : `No products found in category "${selectedCategoryName}"`
+                        : locale === "ar"
+                        ? "لا توجد منتجات تطابق الفلاتر المحددة"
+                        : "No products match the selected filters"}
+                    </div>
+                  </div>
+                ) : (
+                  currentProducts?.map((item, key) =>
+                    productStyle === "grid" ? (
+                      <SingleGridItem item={item} key={key} />
+                    ) : (
+                      <SingleListItem item={item} key={key} />
+                    )
                   )
                 )}
               </div>
               {/* <!-- Products Grid Tab Content End --> */}
 
               {/* <!-- Products Pagination Start --> */}
-              <div className="flex justify-center mt-15">
-                <div className="bg-white shadow-1 rounded-md p-2">
-                  <ul className="flex items-center">
-                    <li>
-                      <button
-                        id="paginationLeft"
-                        aria-label="button for pagination left"
-                        type="button"
-                        disabled
-                        className="flex items-center justify-center w-8 h-9 ease-out duration-200 rounded-[3px disabled:text-gray-4"
-                      >
-                        <svg
-                          className="fill-current"
-                          width="18"
-                          height="18"
-                          viewBox="0 0 18 18"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
+              {totalPages > 1 && (
+                <div className="flex justify-center mt-15">
+                  <div className="bg-white shadow-1 rounded-md p-2">
+                    <ul className="flex items-center">
+                      <li>
+                        <button
+                          id="paginationLeft"
+                          aria-label="button for pagination left"
+                          type="button"
+                          disabled={currentPage === 1}
+                          onClick={goToPreviousPage}
+                          className="flex items-center justify-center w-8 h-9 ease-out duration-200 rounded-[3px] hover:text-white hover:bg-blue disabled:text-gray-4"
                         >
-                          <path
-                            d="M12.1782 16.1156C12.0095 16.1156 11.8407 16.0594 11.7282 15.9187L5.37197 9.45C5.11885 9.19687 5.11885 8.80312 5.37197 8.55L11.7282 2.08125C11.9813 1.82812 12.3751 1.82812 12.6282 2.08125C12.8813 2.33437 12.8813 2.72812 12.6282 2.98125L6.72197 9L12.6563 15.0187C12.9095 15.2719 12.9095 15.6656 12.6563 15.9187C12.4876 16.0312 12.347 16.1156 12.1782 16.1156Z"
-                            fill=""
-                          />
-                        </svg>
-                      </button>
-                    </li>
+                          <svg
+                            className="fill-current"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 18 18"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M12.1782 16.1156C12.0095 16.1156 11.8407 16.0594 11.7282 15.9187L5.37197 9.45C5.11885 9.19687 5.11885 8.80312 5.37197 8.55L11.7282 2.08125C11.9813 1.82812 12.3751 1.82812 12.6282 2.08125C12.8813 2.33437 12.8813 2.72812 12.6282 2.98125L6.72197 9L12.6563 15.0187C12.9095 15.2719 12.9095 15.6656 12.6563 15.9187C12.4876 16.0312 12.347 16.1156 12.1782 16.1156Z"
+                              fill=""
+                            />
+                          </svg>
+                        </button>
+                      </li>
 
-                    <li>
-                      <a
-                        href="#"
-                        className="flex py-1.5 px-3.5 duration-200 rounded-[3px] bg-blue text-white hover:text-white hover:bg-blue"
-                      >
-                        1
-                      </a>
-                    </li>
+                      {getPageNumbers().map((page) => (
+                        <li key={page}>
+                          <a
+                            href="#"
+                            className={`flex py-1.5 px-3.5 duration-200 rounded-[3px] ${
+                              currentPage === page
+                                ? "bg-blue text-white"
+                                : "hover:text-white hover:bg-blue"
+                            }`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              goToPage(page);
+                            }}
+                          >
+                            {page}
+                          </a>
+                        </li>
+                      ))}
 
-                    <li>
-                      <a
-                        href="#"
-                        className="flex py-1.5 px-3.5 duration-200 rounded-[3px] hover:text-white hover:bg-blue"
-                      >
-                        2
-                      </a>
-                    </li>
-
-                    <li>
-                      <a
-                        href="#"
-                        className="flex py-1.5 px-3.5 duration-200 rounded-[3px] hover:text-white hover:bg-blue"
-                      >
-                        3
-                      </a>
-                    </li>
-
-                    <li>
-                      <a
-                        href="#"
-                        className="flex py-1.5 px-3.5 duration-200 rounded-[3px] hover:text-white hover:bg-blue"
-                      >
-                        4
-                      </a>
-                    </li>
-
-                    <li>
-                      <a
-                        href="#"
-                        className="flex py-1.5 px-3.5 duration-200 rounded-[3px] hover:text-white hover:bg-blue"
-                      >
-                        5
-                      </a>
-                    </li>
-
-                    <li>
-                      <a
-                        href="#"
-                        className="flex py-1.5 px-3.5 duration-200 rounded-[3px] hover:text-white hover:bg-blue"
-                      >
-                        ...
-                      </a>
-                    </li>
-
-                    <li>
-                      <a
-                        href="#"
-                        className="flex py-1.5 px-3.5 duration-200 rounded-[3px] hover:text-white hover:bg-blue"
-                      >
-                        10
-                      </a>
-                    </li>
-
-                    <li>
-                      <button
-                        id="paginationLeft"
-                        aria-label="button for pagination left"
-                        type="button"
-                        className="flex items-center justify-center w-8 h-9 ease-out duration-200 rounded-[3px] hover:text-white hover:bg-blue disabled:text-gray-4"
-                      >
-                        <svg
-                          className="fill-current"
-                          width="18"
-                          height="18"
-                          viewBox="0 0 18 18"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
+                      <li>
+                        <button
+                          id="paginationRight"
+                          aria-label="button for pagination right"
+                          type="button"
+                          disabled={currentPage === totalPages}
+                          onClick={goToNextPage}
+                          className="flex items-center justify-center w-8 h-9 ease-out duration-200 rounded-[3px] hover:text-white hover:bg-blue disabled:text-gray-4"
                         >
-                          <path
-                            d="M5.82197 16.1156C5.65322 16.1156 5.5126 16.0594 5.37197 15.9469C5.11885 15.6937 5.11885 15.3 5.37197 15.0469L11.2782 9L5.37197 2.98125C5.11885 2.72812 5.11885 2.33437 5.37197 2.08125C5.6251 1.82812 6.01885 1.82812 6.27197 2.08125L12.6282 8.55C12.8813 8.80312 12.8813 9.19687 12.6282 9.45L6.27197 15.9187C6.15947 16.0312 5.99072 16.1156 5.82197 16.1156Z"
-                            fill=""
-                          />
-                        </svg>
-                      </button>
-                    </li>
-                  </ul>
+                          <svg
+                            className="fill-current"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 18 18"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M5.82197 16.1156C5.65322 16.1156 5.5126 16.0594 5.37197 15.9469C5.11885 15.6937 5.11885 15.3 5.37197 15.0469L11.2782 9L5.37197 2.98125C5.11885 2.72812 5.11885 2.33437 5.37197 2.08125C5.6251 1.82812 6.01885 1.82812 6.27197 2.08125L12.6282 8.55C12.8813 8.80312 12.8813 9.19687 12.6282 9.45L6.27197 15.9187C6.15947 16.0312 5.99072 16.1156 5.82197 16.1156Z"
+                              fill=""
+                            />
+                          </svg>
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
-              </div>
+              )}
               {/* <!-- Products Pagination End --> */}
             </div>
             {/* // <!-- Content End --> */}

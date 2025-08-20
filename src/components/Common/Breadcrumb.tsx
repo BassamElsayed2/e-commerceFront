@@ -1,7 +1,10 @@
+import { useLocale } from "next-intl";
 import Link from "next/link";
 import React from "react";
 
 const Breadcrumb = ({ title, pages }) => {
+  const locale = useLocale();
+
   return (
     <div className="overflow-hidden shadow-breadcrumb pt-[209px] sm:pt-[155px] lg:pt-[95px] xl:pt-[165px]">
       <div className="border-t border-gray-3">
@@ -13,13 +16,16 @@ const Breadcrumb = ({ title, pages }) => {
 
             <ul className="flex items-center gap-2">
               <li className="text-custom-sm hover:text-blue">
-                <Link href="/">Home /</Link>
+                <Link href="/">{locale === "ar" ? "الرئيسية" : "Home"} /</Link>
               </li>
 
               {pages.length > 0 &&
                 pages.map((page, key) => (
-                  <li className="text-custom-sm last:text-blue capitalize" key={key}>
-                    {page} 
+                  <li
+                    className="text-custom-sm last:text-blue capitalize"
+                    key={key}
+                  >
+                    {page}
                   </li>
                 ))}
             </ul>

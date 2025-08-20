@@ -4,6 +4,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { routing } from "@/app/i18n/routing";
 import { notFound } from "next/navigation";
 import ClientLayout from "@/app/(site)/[locale]/ClientLayout";
+import { Providers } from "@/app/context/QueryProvider";
 
 export default async function RootLayout({
   children,
@@ -32,7 +33,9 @@ export default async function RootLayout({
     >
       <body className={locale === "ar" ? "rtl" : "ltr"}>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <ClientLayout>{children}</ClientLayout>
+          <Providers>
+            <ClientLayout>{children}</ClientLayout>
+          </Providers>
         </NextIntlClientProvider>
       </body>
     </html>
