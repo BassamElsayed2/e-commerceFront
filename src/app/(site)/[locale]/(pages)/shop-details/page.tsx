@@ -9,13 +9,15 @@ export const metadata: Metadata = {
 };
 
 interface ShopDetailsPageProps {
-  searchParams: { id?: string };
+  searchParams: Promise<{ id?: string }>;
 }
 
-const ShopDetailsPage = ({ searchParams }: ShopDetailsPageProps) => {
+const ShopDetailsPage = async ({ searchParams }: ShopDetailsPageProps) => {
+  const params = await searchParams;
+
   return (
     <main>
-      <ShopDetails productId={searchParams.id} />
+      <ShopDetails productId={params.id} />
     </main>
   );
 };
