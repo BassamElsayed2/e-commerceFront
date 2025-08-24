@@ -18,9 +18,9 @@ const CustomSelect = ({ options, isLoading = false }) => {
 
     // Navigate to shop page with category filter
     if (option.value !== "0") {
-      router.push(`/${locale}/shop-without-sidebar?category=${option.value}`);
+      router.push(`/${locale}/shop?category=${option.value}`);
     } else {
-      router.push(`/${locale}/shop-without-sidebar`);
+      router.push(`/${locale}/shop`);
     }
   };
 

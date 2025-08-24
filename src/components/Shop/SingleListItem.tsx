@@ -78,18 +78,25 @@ const SingleListItem = ({ item }: { item: Product }) => {
     <div className="group rounded-lg bg-white shadow-1">
       <div className="flex">
         <div className="shadow-list relative overflow-hidden flex items-center justify-center max-w-[270px] w-full sm:min-h-[270px] p-4">
-          <Image
-            src={
-              item.imgs?.thumbnails?.[0] ||
-              (Array.isArray(item.image_url)
-                ? item.image_url[0]
-                : item.image_url) ||
-              "/images/products/product-1-bg-1.png"
-            }
-            alt=""
-            width={250}
-            height={250}
-          />
+          <div className="relative w-full h-full max-w-[250px] max-h-[250px]">
+            <Image
+              src={
+                item.imgs?.thumbnails?.[0] ||
+                (Array.isArray(item.image_url)
+                  ? item.image_url[0]
+                  : item.image_url) ||
+                "/images/products/product-1-bg-1.png"
+              }
+              alt={locale === "ar" ? item.name_ar : item.name_en}
+              fill
+              className="object-contain"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              onError={(e) => {
+                // Fallback to a default image if the original fails to load
+                e.currentTarget.src = "/images/products/product-1-bg-1.png";
+              }}
+            />
+          </div>
 
           <div className="absolute left-0 bottom-0 translate-y-full w-full flex items-center justify-center gap-2.5 pb-5 ease-linear duration-200 group-hover:translate-y-0">
             <button

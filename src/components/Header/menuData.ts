@@ -13,14 +13,14 @@ export const menuData: Menu[] = [
     title_ar: "المتجر",
     title_en: "Shop",
     newTab: false,
-    path: "/shop-without-sidebar",
+    path: "/shop",
   },
   {
     id: 3,
     title_ar: "العروض المحدودة",
     title_en: "Limited Offers",
     newTab: false,
-    path: "/shop-without-sidebar?filter=limited-offers",
+    path: "/shop?filter=limited-offers",
   },
   {
     id: 4,

@@ -48,7 +48,7 @@ const SingleItem = ({ item }: { item: Product }) => {
   };
 
   return (
-    <div className="group relative">
+    <div className="group relative product-card">
       {/* Success Messages */}
       {showCartSuccess && (
         <div className="absolute top-4 right-4 z-10 bg-green-500 text-white px-3 py-1 rounded-md text-sm animate-fade-in">
@@ -56,12 +56,11 @@ const SingleItem = ({ item }: { item: Product }) => {
         </div>
       )}
 
-      <div className="relative overflow-hidden rounded-lg bg-[#F6F7FB] min-h-[403px]">
-        <div className="text-center px-4 py-7.5">
-          <h3 className="font-medium text-dark ease-out duration-200 hover:text-blue mb-1.5">
+      <div className="relative overflow-hidden rounded-lg bg-[#F6F7FB] h-[420px] flex flex-col">
+        <div className="text-center px-4 py-6 flex-shrink-0">
+          <h3 className="font-medium text-dark ease-out duration-200 hover:text-blue mb-2 line-clamp-2 min-h-[2.5rem]">
             <Link href={`/shop-details?id=${item.id}`}>
-              {" "}
-              {locale === "ar" ? item.name_ar : item.name_en}{" "}
+              {locale === "ar" ? item.name_ar : item.name_en}
             </Link>
           </h3>
 
@@ -83,23 +82,26 @@ const SingleItem = ({ item }: { item: Product }) => {
           </span>
         </div>
 
-        <div className="flex justify-center items-center">
-          <Image
-            src={
-              item.imgs?.thumbnails?.[0] ||
-              (Array.isArray(item.image_url)
-                ? item.image_url[0]
-                : item.image_url) ||
-              "/images/products/product-1-bg-1.png"
-            }
-            alt={locale === "ar" ? item.name_ar : item.name_en}
-            width={280}
-            height={280}
-            onError={(e) => {
-              // Fallback to a default image if the original fails to load
-              e.currentTarget.src = "/images/products/product-1-bg-1.png";
-            }}
-          />
+        <div className="flex justify-center items-center flex-1 px-4">
+          <div className="relative w-full h-full max-w-[280px] max-h-[280px]">
+            <Image
+              src={
+                item.imgs?.thumbnails?.[0] ||
+                (Array.isArray(item.image_url)
+                  ? item.image_url[0]
+                  : item.image_url) ||
+                "/images/products/product-1-bg-1.png"
+              }
+              alt={locale === "ar" ? item.name_ar : item.name_en}
+              fill
+              className="object-contain"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              onError={(e) => {
+                // Fallback to a default image if the original fails to load
+                e.currentTarget.src = "/images/products/product-1-bg-1.png";
+              }}
+            />
+          </div>
         </div>
 
         <div className="absolute right-0 bottom-0 translate-x-full w-full flex flex-col gap-2 p-5.5 ease-linear duration-300 group-hover:translate-x-0">

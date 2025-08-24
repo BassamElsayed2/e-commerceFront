@@ -54,7 +54,9 @@ const BestSeller = () => {
                 : "Error loading data"}
             </div>
           ) : products && products.length > 0 ? (
-            products.map((item, key) => <SingleItem item={item} key={key} />)
+            products
+              .slice(0, 6)
+              .map((item, key) => <SingleItem item={item} key={key} />)
           ) : (
             <div className="col-span-full text-center py-8">
               {locale === "ar"
@@ -66,7 +68,7 @@ const BestSeller = () => {
 
         <div className="text-center mt-12.5">
           <Link
-            href={`/${locale}/shop-without-sidebar`}
+            href={`/${locale}/shop`}
             className="inline-flex font-medium text-custom-sm py-3 px-7 sm:px-12.5 rounded-md border-gray-3 border bg-gray-1 text-dark ease-out duration-200 hover:bg-dark hover:text-white hover:border-transparent"
           >
             {locale === "ar" ? "عرض الكل" : "View All"}

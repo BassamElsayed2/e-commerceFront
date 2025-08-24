@@ -342,11 +342,7 @@ const ShopWithoutSidebar = () => {
                     <button
                       onClick={() => {
                         setSelectedCategories([]);
-                        window.history.pushState(
-                          {},
-                          "",
-                          `/${locale}/shop-without-sidebar`
-                        );
+                        window.history.pushState({}, "", `/${locale}/shop`);
                       }}
                       className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                     >
@@ -382,11 +378,7 @@ const ShopWithoutSidebar = () => {
                     </div>
                     <button
                       onClick={() => {
-                        window.history.pushState(
-                          {},
-                          "",
-                          `/${locale}/shop-without-sidebar`
-                        );
+                        window.history.pushState({}, "", `/${locale}/shop`);
                       }}
                       className="text-red-600 hover:text-red-800 text-sm font-medium"
                     >

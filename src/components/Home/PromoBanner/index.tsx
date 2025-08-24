@@ -122,7 +122,7 @@ const PromoBanner = () => {
               </p>
 
               <Link
-                href={`/${currentLocale}/shop-without-sidebar`}
+                href={`/${currentLocale}/shop`}
                 className="inline-flex font-medium text-custom-sm text-white bg-orange py-2.5 px-8.5 rounded-md ease-out duration-200 hover:bg-orange-dark mt-7.5"
               >
                 {isRTL ? "شراء الآن" : "Buy Now"}

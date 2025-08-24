@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   // other metadata
 };
 
-const ShopWithoutSidebarPage = () => {
+const ShopPage = () => {
   return (
     <main>
       <ShopWithoutSidebar />
@@ -16,4 +16,4 @@ const ShopWithoutSidebarPage = () => {
   );
 };
 
-export default ShopWithoutSidebarPage;
+export default ShopPage;

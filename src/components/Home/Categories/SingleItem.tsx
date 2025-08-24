@@ -9,7 +9,7 @@ const SingleItem = ({ item }: { item: Category }) => {
 
   return (
     <Link
-      href={`/${locale}/shop-without-sidebar?category=${item.id}`}
+      href={`/${locale}/shop?category=${item.id}`}
       className="group flex flex-col items-center"
     >
       <div className="max-w-[130px] w-full bg-[#F2F3F8] h-32.5 rounded-full flex items-center justify-center mb-4">

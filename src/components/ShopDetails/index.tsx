@@ -176,7 +176,7 @@ const ShopDetails = ({ productId }: ShopDetailsProps) => {
             <p className="text-sm text-gray-500">Product ID: {productId}</p>
           </div>
           <Link
-            href={`/${locale}/shop-without-sidebar`}
+            href={`/${locale}/shop`}
             className="inline-flex font-medium text-white bg-blue py-3 px-7 rounded-md ease-out duration-200 hover:bg-blue-dark"
           >
             {locale === "ar" ? "العودة إلى المتجر" : "Back to shop"}
@@ -232,7 +232,7 @@ const ShopDetails = ({ productId }: ShopDetailsProps) => {
                 : "Please select a product from the store page to view details"}
             </p>
             <Link
-              href={`/${locale}/shop-without-sidebar`}
+              href={`/${locale}/shop`}
               className="inline-flex font-medium text-white bg-blue py-3 px-7 rounded-md ease-out duration-200 hover:bg-blue-dark"
             >
               {locale === "ar" ? "العودة إلى المتجر" : "Back to shop"}
