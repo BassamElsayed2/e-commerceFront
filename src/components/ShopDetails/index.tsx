@@ -14,6 +14,7 @@ import { Link } from "@/app/i18n/navigation";
 import { useLocale } from "next-intl";
 import { useQuery } from "@tanstack/react-query";
 import { updateproductDetails } from "@/redux/features/product-details";
+import Categories from "../Home/Categories";
 
 interface ShopDetailsProps {
   productId?: string;
@@ -528,7 +529,8 @@ const ShopDetails = ({ productId }: ShopDetailsProps) => {
             </div>
           </section>
 
-          <RecentlyViewdItems />
+          {/* <RecentlyViewdItems /> */}
+          <Categories />
         </>
       )}
     </>
