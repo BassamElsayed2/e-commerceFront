@@ -8,7 +8,7 @@ const Dropdown = ({ menuItem, stickyMenu }) => {
 
   return (
     <li
-      onClick={() => setDropdownToggler(!dropdownToggler)}
+      onClick={() => setDropdownToggler((prev) => !prev)}
       className={`group relative before:w-0 before:h-[3px] before:bg-blue before:absolute before:left-0 before:top-0 before:rounded-b-[3px] before:ease-out before:duration-200 hover:before:w-full ${
         pathUrl.includes(menuItem.title) && "before:!w-full"
       }`}
@@ -21,7 +21,8 @@ const Dropdown = ({ menuItem, stickyMenu }) => {
       >
         {menuItem.title}
         <svg
-          className="fill-current cursor-pointer"
+          className="fill-current cursor-pointer transition-transform duration-300"
+          style={{ transform: dropdownToggler ? "rotate(180deg)" : "rotate(0deg)" }}
           width="16"
           height="16"
           viewBox="0 0 16 16"
@@ -37,21 +38,19 @@ const Dropdown = ({ menuItem, stickyMenu }) => {
         </svg>
       </a>
 
-      {/* <!-- Dropdown Start --> */}
+      {/* Dropdown */}
       <ul
-        className={`dropdown ${dropdownToggler && "flex"} ${
-          stickyMenu
-            ? "xl:group-hover:translate-y-0"
-            : "xl:group-hover:translate-y-0"
-        }`}
+        className={`absolute top-full left-0 z-50 w-56 flex-col hidden group-hover:flex xl:group-hover:flex
+          ${dropdownToggler ? "flex" : "hidden"} 
+          bg-white shadow-lg rounded-md mt-2`}
       >
         {menuItem.submenu.map((item, i) => (
           <li key={i}>
             <Link
               href={item.path}
-              className={`flex text-custom-sm hover:text-blue hover:bg-gray-1 py-[7px] px-4.5 ${
-                pathUrl === item.path && "text-blue bg-gray-1"
-              } `}
+              className={`block text-custom-sm text-dark hover:text-blue hover:bg-gray-100 py-2 px-4 ${
+                pathUrl === item.path ? "text-blue bg-gray-100" : ""
+              }`}
             >
               {item.title}
             </Link>

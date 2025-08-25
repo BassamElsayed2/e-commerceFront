@@ -7,20 +7,29 @@ import Link from "next/link";
 const SingleItem = ({ item }: { item: Category }) => {
   const locale = useLocale();
 
+  // استخدم صورة افتراضية لو ما في صورة
+  const imgSrc = item.image_url && item.image_url.trim() !== "" ? item.image_url : "/placeholder.png";
+
   return (
     <Link
       href={`/${locale}/shop-without-sidebar?category=${item.id}`}
-      className="group flex flex-col items-center"
+      className="group flex flex-col items-center w-full"
     >
-      <div className="max-w-[130px] w-full bg-[#F2F3F8] h-32.5 rounded-full flex items-center justify-center mb-4">
-        <Image src={item.image_url} alt="Category" width={82} height={62} />
+      {/* Circle Background + Image */}
+      <div className="w-[150px] h-[150px] rounded-full bg-[#F2F3F8] flex items-center justify-center mb-4 transition-transform duration-500 group-hover:scale-110">
+        <Image
+          src={imgSrc}
+          alt={locale === "ar" ? item.name_ar : item.name_en}
+          width={120}
+          height={90}
+          className="object-contain"
+        />
       </div>
 
-      <div className="flex justify-center">
-        <h3 className="inline-block font-medium text-center text-dark bg-gradient-to-r from-blue to-blue bg-[length:0px_1px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 hover:bg-[length:100%_3px] group-hover:bg-[length:100%_1px] group-hover:text-blue">
-          {locale === "ar" ? item.name_ar : item.name_en}
-        </h3>
-      </div>
+      {/* Category Name */}
+      <h3 className="font-bold text-center text-[#239FBF] text-base bg-gradient-to-r from-blue-500 to-blue-700 bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 group-hover:bg-[length:100%_2px] group-hover:text-blue-600">
+        {locale === "ar" ? item.name_ar : item.name_en}
+      </h3>
     </Link>
   );
 };

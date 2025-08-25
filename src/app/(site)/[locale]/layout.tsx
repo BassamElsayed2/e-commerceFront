@@ -26,18 +26,10 @@ export default async function RootLayout({
   }
 
   return (
-    <html
-      lang={locale}
-      suppressHydrationWarning={true}
-      dir={locale === "ar" ? "rtl" : "ltr"}
-    >
-      <body className={locale === "ar" ? "rtl" : "ltr"}>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <Providers>
-            <ClientLayout>{children}</ClientLayout>
-          </Providers>
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <Providers>
+        <ClientLayout>{children}</ClientLayout>
+      </Providers>
+    </NextIntlClientProvider>
   );
 }

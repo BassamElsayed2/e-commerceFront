@@ -136,7 +136,7 @@ const BlogDetails = () => {
                 <ul className="flex flex-wrap items-center gap-3.5">
                   <li>
                     <a
-                      className="inline-flex hover:text-white border border-gray-3 bg-white py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
+                      className="inline-flex hover:text-white border border-gray-3 bg-white py-2 px-4 rounded-md ease-out duration-200 hover:bg-[#239FBF] hover:border-blue"
                       href="#"
                     >
                       Desktop
@@ -145,7 +145,7 @@ const BlogDetails = () => {
 
                   <li>
                     <a
-                      className="inline-flex hover:text-white border border-gray-3 bg-white py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
+                      className="inline-flex hover:text-white border border-gray-3 bg-white py-2 px-4 rounded-md ease-out duration-200 hover:bg-[#239FBF] hover:border-blue"
                       href="#"
                     >
                       Macbook

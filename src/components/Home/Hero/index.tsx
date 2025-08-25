@@ -10,16 +10,11 @@ import { useQuery } from "@tanstack/react-query";
 
 const Hero = () => {
   const locale = useLocale();
-  const {
-    data: limitedTimeProducts,
-    isLoading,
-    error,
-  } = useQuery({
+  const { data: limitedTimeProducts } = useQuery({
     queryKey: ["limitedTimeOfferProducts"],
     queryFn: getLimitedTimeOfferProducts,
   });
 
-  // Fallback data if no products available
   const fallbackProducts = [
     {
       id: 1,
@@ -45,67 +40,63 @@ const Hero = () => {
       : fallbackProducts;
 
   return (
-    <section className="overflow-hidden pb-10 lg:pb-12.5 xl:pb-15 pt-57.5 sm:pt-45 lg:pt-30 xl:pt-51.5 bg-[#E5EAF4]">
+    <section className="overflow-hidden pb-10 lg:pb-12 xl:pb-15 pt-20 sm:pt-16 lg:pt-12 xl:pt-20 bg-[#DFE0E2]/20 mt-30">
       <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
         <div className="flex flex-wrap gap-5">
+          {/* Carousel Section */}
           <div className="xl:max-w-[757px] w-full">
-            <div className="relative z-1 rounded-[10px] bg-white overflow-hidden">
-              {/* <!-- bg shapes --> */}
+            <div className="relative z-0 rounded-[10px] bg-white overflow-hidden shadow-lg">
               <Image
                 src="/images/hero/hero-bg.png"
-                alt="hero bg shapes"
-                className="absolute right-0 bottom-0 -z-1"
+                alt="hero background shapes"
+                className="absolute right-0 bottom-0 -z-10"
                 width={534}
                 height={520}
               />
-
               <HeroCarousel />
             </div>
           </div>
 
+          {/* Products Section */}
           <div className="xl:max-w-[393px] w-full">
             <div className="flex flex-col sm:flex-row xl:flex-col gap-5">
-              {productsToShow.map((product, index) => (
+              {productsToShow.map((product) => (
                 <div
                   key={product.id}
-                  className="w-full relative rounded-[10px] bg-white p-4 sm:p-7.5"
+                  className="w-full relative rounded-[10px] bg-white p-4 sm:p-6 shadow-md transition-transform duration-300 hover:scale-105"
                 >
-                  <div className="flex items-center gap-14">
+                  <div className="flex items-center gap-4 sm:gap-14">
                     <div>
-                      <h2 className="max-w-[153px] font-semibold text-dark text-xl mb-20">
-                        <Link href={`/shop-details?id=${product.id}`}>
+                      <h2 className="max-w-[153px] font-semibold text-[#0C2756] text-xl mb-2">
+                        <Link
+                          href={`/shop-details?id=${product.id}`}
+                          className="hover:text-[#239FBF] transition-colors duration-300"
+                        >
                           {locale === "en" ? product.name_en : product.name_ar}
                         </Link>
                       </h2>
 
                       <div>
-                        <p className="font-medium text-dark-4 text-custom-sm mb-1.5">
-                          {locale === "en" ? "limited time offer" : "عرض محدود"}
+                        <p className="font-medium text-[#0C2756]/70 text-sm mb-1.5">
+                          {locale === "en" ? "Limited Time Offer" : "عرض محدود"}
                         </p>
                         <span className="flex items-center gap-3">
-                          <span className="font-medium text-heading-5 text-red">
+                          <span className="font-semibold text-[#239FBF] text-lg">
                             ${product.offer_price || product.price}
                           </span>
-                          {product.offer_price &&
-                            product.price > product.offer_price && (
-                              <span className="font-medium text-2xl text-dark-4 line-through">
-                                ${product.price}
-                              </span>
-                            )}
+                          {product.offer_price && product.price > product.offer_price && (
+                            <span className="font-medium text-[#0C2756]/50 line-through">
+                              ${product.price}
+                            </span>
+                          )}
                         </span>
                       </div>
                     </div>
 
                     <div>
                       <Image
-                        src={
-                          Array.isArray(product.image_url)
-                            ? product.image_url[0]
-                            : product.image_url
-                        }
-                        alt={
-                          locale === "en" ? product.name_en : product.name_ar
-                        }
+                        src={Array.isArray(product.image_url) ? product.image_url[0] : product.image_url}
+                        alt={locale === "en" ? product.name_en : product.name_ar}
                         width={123}
                         height={161}
                         className="object-cover rounded"
@@ -119,7 +110,7 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* <!-- Hero features --> */}
+      {/* Hero Features */}
       <HeroFeature />
     </section>
   );

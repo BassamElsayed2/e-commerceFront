@@ -28,7 +28,7 @@ export const menuData: Menu[] = [
     title_en: "Contact",
     newTab: false,
     path: "/contact",
-  },
+  },];
   // {
   //   id: 6,
   //   title: "pages",
@@ -135,4 +135,4 @@ export const menuData: Menu[] = [
   //     },
   //   ],
   // },
-];
+

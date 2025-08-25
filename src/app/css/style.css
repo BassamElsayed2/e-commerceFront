@@ -184,7 +184,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .hero-carousel .swiper-pagination-bullet-active {
-  @apply w-5.5 bg-blue;
+  @apply w-5.5 bg-[#239FBF];
 }
 
 .hero-carousel .swiper-pagination {
@@ -198,7 +198,7 @@ input[type="search"]::-webkit-search-results-decoration {
 
 .common-carousel .swiper-button-next,
 .common-carousel .swiper-button-prev {
-  @apply !static h-9 w-9 rounded-lg bg-white text-dark border border-gray-3 m-0 ease-out duration-200 hover:bg-blue hover:text-white hover:border-blue;
+  @apply !static h-9 w-9 rounded-lg bg-white text-dark border border-gray-3 m-0 ease-out duration-200 hover:bg-[#239FBF] hover:text-white hover:border-[#239FBF];
 }
 
 .common-carousel .swiper-button-next svg,
@@ -207,11 +207,11 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .img-zoom-container img {
-  transition: 0.8s;
+  transition: 1s;
 }
 .img-zoom-container img:hover {
   transform: scale(2) rotate(0deg);
-  transition: 0.8s;
+  transition: 1s;
 }
 
 .priceSlide .noUi-target {
@@ -221,10 +221,10 @@ input[type="search"]::-webkit-search-results-decoration {
   @apply h-1 rounded-full bg-gray-3;
 }
 .priceSlide .noUi-connect {
-  @apply h-1 rounded-full bg-blue;
+  @apply h-1 rounded-full bg-[#239FBF];
 }
 .priceSlide .noUi-horizontal .noUi-handle {
-  @apply -top-3 h-7 w-7 rounded-full border border-gray-4 bg-white shadow-range before:block before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-4 before:h-4 before:rounded-full before:bg-blue;
+  @apply -top-3 h-7 w-7 rounded-full border border-gray-4 bg-white shadow-range before:block before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-4 before:h-4 before:rounded-full before:bg-[#239FBF];
 }
 .priceSlide .noUi-tooltip {
   @apply border-none p-0 bg-transparent text-custom-sm text-dark-4;
@@ -235,7 +235,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .range-slider {
-  @apply w-full !h-[4px] rounded-md bg-blue relative mb-3;
+  @apply w-full !h-[4px] rounded-md bg-[#239FBF] relative mb-3;
 }
 
 .slider .thumb {
@@ -258,4 +258,18 @@ input[type="search"]::-webkit-search-results-decoration {
 
 .range-slider__range {
   @apply !bg-blue;
+}
+/* Scrollbar بلون نفس القائمة */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #0f2f66; /* نفس خلفية الليست */
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #239FBF; /* لون مميز */
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #1a7f99; /* أغمق عند الهوفر */
 }

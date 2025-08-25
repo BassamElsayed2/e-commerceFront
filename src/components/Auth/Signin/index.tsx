@@ -18,25 +18,22 @@ const Signin = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Redirect if user is already authenticated
   useEffect(() => {
     if (!loading && user) {
       redirectIfAuthenticated();
     }
   }, [loading, user, redirectIfAuthenticated]);
 
-  // Debug logging
   useEffect(() => {
     console.log("Signin component - loading:", loading, "user:", !!user);
   }, [loading, user]);
 
-  // Show loading state while checking authentication
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading authentication...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#0C2756] mx-auto mb-4"></div>
+          <p className="text-[#0C2756]">Loading authentication...</p>
         </div>
       </div>
     );
@@ -66,7 +63,6 @@ const Signin = () => {
       [name]: value,
     }));
 
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -88,7 +84,6 @@ const Signin = () => {
       const result = await signIn(formData.email, formData.password);
 
       if (result.success) {
-        // Form will be reset and user will be redirected by the auth hook
         setFormData({
           email: "",
           password: "",
@@ -104,20 +99,20 @@ const Signin = () => {
   return (
     <>
       <Breadcrumb title={"Signin"} pages={["Signin"]} />
-      <section className="overflow-hidden py-20 bg-gray-2">
+      <section className="overflow-hidden py-20 bg-white">
         <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
           <div className="max-w-[570px] w-full mx-auto rounded-xl bg-white shadow-1 p-4 sm:p-7.5 xl:p-11">
             <div className="text-center mb-11">
-              <h2 className="font-semibold text-xl sm:text-2xl xl:text-heading-5 text-dark mb-1.5">
+              <h2 className="font-semibold text-xl sm:text-2xl xl:text-heading-5 text-[#0C2756] mb-1.5">
                 {t("signIn")}
               </h2>
-              <p>{t("enterYourDetail")}</p>
+              <p className="text-[#0C2756]">{t("enterYourDetail")}</p>
             </div>
 
             <div>
               <form onSubmit={handleSubmit}>
                 <div className="mb-5">
-                  <label htmlFor="email" className="block mb-2.5">
+                  <label htmlFor="email" className="block mb-2.5 text-[#0C2756]">
                     {t("emailAddress")}
                   </label>
 
@@ -129,8 +124,8 @@ const Signin = () => {
                     onChange={handleInputChange}
                     placeholder={t("enterEmailAddress")}
                     className={`rounded-lg border ${
-                      errors.email ? "border-red-500" : "border-gray-3"
-                    } bg-gray-1 placeholder:text-dark-5 w-full py-3 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20`}
+                      errors.email ? "border-red-500" : "border-[#239FBF]"
+                    } bg-white placeholder:text-[#0C2756] w-full py-3 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-[#239FBF]/20`}
                   />
                   {errors.email && (
                     <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -138,7 +133,7 @@ const Signin = () => {
                 </div>
 
                 <div className="mb-5">
-                  <label htmlFor="password" className="block mb-2.5">
+                  <label htmlFor="password" className="block mb-2.5 text-[#0C2756]">
                     {t("password")}
                   </label>
 
@@ -151,20 +146,18 @@ const Signin = () => {
                     placeholder={t("enterPassword")}
                     autoComplete="current-password"
                     className={`rounded-lg border ${
-                      errors.password ? "border-red-500" : "border-gray-3"
-                    } bg-gray-1 placeholder:text-dark-5 w-full py-3 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20`}
+                      errors.password ? "border-red-500" : "border-[#239FBF]"
+                    } bg-white placeholder:text-[#0C2756] w-full py-3 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-[#239FBF]/20`}
                   />
                   {errors.password && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.password}
-                    </p>
+                    <p className="text-red-500 text-sm mt-1">{errors.password}</p>
                   )}
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full flex justify-center font-medium text-white bg-dark py-3 px-6 rounded-lg ease-out duration-200 hover:bg-blue mt-7.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex justify-center font-medium text-white bg-gradient-to-r from-[#0C2756] to-[#239FBF] py-3 px-6 rounded-lg ease-out duration-200 hover:from-[#239FBF] hover:to-[#0C2756] mt-7.5 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <div className="flex items-center">
@@ -178,16 +171,16 @@ const Signin = () => {
 
                 <a
                   href="#"
-                  className="block text-center text-dark-4 mt-4.5 ease-out duration-200 hover:text-dark"
+                  className="block text-center text-[#0C2756] mt-4.5 ease-out duration-200 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-[#0C2756] hover:to-[#239FBF]"
                 >
                   {t("forgetPassword")}
                 </a>
 
-                <p className="text-center mt-6">
+                <p className="text-center mt-6 text-[#0C2756]">
                   {t("dontHaveAccount")}
                   <Link
                     href={`/${locale}/signup`}
-                    className="text-dark ease-out duration-200 hover:text-blue pl-2"
+                    className="text-[#0C2756] ease-out duration-200 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-[#0C2756] hover:to-[#239FBF] pl-2"
                   >
                     {t("signUpNow")}
                   </Link>
