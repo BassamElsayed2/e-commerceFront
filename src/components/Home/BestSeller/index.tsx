@@ -26,7 +26,7 @@ const BestSeller = () => {
         {/* <!-- section title --> */}
         <div className="mb-10 flex items-center justify-between">
           <div>
-          <span className="flex items-center gap-2.5 font-medium text-dark mb-1.5">
+            <span className="flex items-center gap-2.5 font-medium text-dark mb-1.5">
               <svg
                 width="20"
                 height="20"
@@ -46,8 +46,8 @@ const BestSeller = () => {
                   strokeLinecap="round"
                 />
               </svg>
-  {locale === "ar" ? "هذا الشهر" : "This Month"}
-</span>
+              {locale === "ar" ? "هذا الشهر" : "This Month"}
+            </span>
 
             <h2 className="font-semibold text-xl xl:text-heading-5 text-dark">
               {locale === "ar" ? "المنتجات الأكثر مبيعا" : "Best Sellers"}
@@ -68,7 +68,9 @@ const BestSeller = () => {
                 : "Error loading data"}
             </div>
           ) : products && products.length > 0 ? (
-            products.map((item, key) => <SingleItem item={item} key={key} />)
+            products
+              .slice(0, 6)
+              .map((item, key) => <SingleItem item={item} key={key} />)
           ) : (
             <div className="col-span-full text-center py-8">
               {locale === "ar"
@@ -79,11 +81,10 @@ const BestSeller = () => {
         </div>
 
         <div className="text-center mt-12.5 mb-5">
-         
-        <Link
+          <Link
             href={`/${locale}/shop-without-sidebar`}
             className="p-2 rounded-full border border-[#239FBF] hover:bg-[#239FBF] hover:text-white transition"
-            >
+          >
             {locale === "ar" ? "عرض الكل" : "View All"}
           </Link>
         </div>

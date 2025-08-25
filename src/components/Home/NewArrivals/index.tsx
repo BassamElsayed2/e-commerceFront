@@ -1,19 +1,15 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import ProductItem from "@/components/Common/ProductItem";
-import shopData from "@/components/Shop/shopData";
-import {
-  getProducts,
-  getLimitedTimeOfferProducts,
-} from "@/services/apiProducts";
+import { getProducts, getLimitedTimeOfferProducts } from "@/services/apiProducts";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale } from "next-intl";
 
 const NewArrival = () => {
   const locale = useLocale();
+
   const {
     data: products,
     isLoading,
@@ -35,7 +31,7 @@ const NewArrival = () => {
   return (
     <section className="overflow-hidden pt-15">
       <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
-        {/* <!-- section title --> */}
+        {/* Section Title */}
         <div className="mb-7 flex items-center justify-between">
           <div>
             <span className="flex items-center gap-2.5 font-medium text-dark mb-1.5">
@@ -68,20 +64,18 @@ const NewArrival = () => {
           <Link
             href={`/${locale}/shop-without-sidebar`}
             className="p-2 rounded-full border border-[#239FBF] hover:bg-[#239FBF] hover:text-white transition"
-            >
+          >
             {locale === "ar" ? "عرض الكل" : "View All"}
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-  {products?.slice(-8).map((item, key) => (
-    <ProductItem item={item} key={key} />
-  ))}
-</div>
-
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {products?.slice(-6).map((item, key) => (
+            <ProductItem item={item} key={key} />
+          ))}
+        </div>
       </div>
-
-      {/* <!-- Limited Time Offers Section --> */}
     </section>
   );
 };
