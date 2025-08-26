@@ -106,7 +106,7 @@ const HeroCarousal = () => {
                 </div>
 
                 {/* Product Title */}
-                <h1 className="font-bold text-dark text-3xl sm:text-4xl lg:text-5xl mb-4 leading-tight transition-all duration-800 group-hover:translate-y-1">
+                <h1 className=" text-dark text-3xl sm:text-4xl lg:text-5xl mb-4 leading-tight transition-all duration-800 group-hover:translate-y-1">
                   <Link
                     href={`/shop-details?id=${product.id}`}
                     className="hover:text-[#239FBF] transition-colors duration-300"

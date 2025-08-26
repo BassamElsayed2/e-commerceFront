@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 
@@ -19,7 +18,6 @@ const CustomSelect = ({
   const router = useRouter();
   const locale = useLocale();
   const rootRef = useRef<HTMLDivElement>(null);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
 
   // تحديث selected عند تغير الخيارات
   useEffect(() => {
@@ -29,7 +27,7 @@ const CustomSelect = ({
     }
   }, [options]);
 
-  // إدارة فتح/إغلاق القايمة وحساب موقعها
+  // إغلاق القائمة عند الضغط خارجها
   useEffect(() => {
     if (!isOpen) return;
 
@@ -46,25 +44,11 @@ const CustomSelect = ({
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleKey);
 
-    if (rootRef.current) {
-      const rect = rootRef.current.getBoundingClientRect();
-      const dropdownHeight = 256; // تقريبًا max-h-64
-      let top = rect.bottom;
-      if (rect.bottom + dropdownHeight > window.innerHeight) {
-        top = Math.max(10, rect.top - dropdownHeight);
-      }
-      setDropdownPosition({
-        top: top + window.scrollY,
-        left: rect.left + window.scrollX,
-        width: rect.width,
-      });
-    }
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleKey);
     };
-  }, [isOpen]); // ثابت
+  }, [isOpen]);
 
   const list = options.slice(1);
 
@@ -129,38 +113,38 @@ const CustomSelect = ({
         </svg>
       </button>
 
-      {isOpen &&
-        createPortal(
-          <ul
-            role="listbox"
-            style={{ top: dropdownPosition.top, left: dropdownPosition.left, width: dropdownPosition.width }}
-            className={`absolute z-[9999] max-h-64 overflow-auto rounded-xl bg-[#0f2f66] ring-1 ring-white/15 shadow-2xl outline-none transition custom-scrollbar`}
-          >
-            {list.length === 0 && (
-              <li className="px-3 py-2 text-sm text-[#DFE0E2]/70 select-none">
-                {locale === "ar" ? "لا توجد فئات" : "No categories"}
+      {isOpen && (
+       <ul
+       role="listbox"
+       className="absolute top-full left-0 w-full mt-2 max-h-64 overflow-auto 
+                  rounded-xl bg-[#0f2f66] ring-1 ring-white/15 shadow-2xl outline-none 
+                  transition custom-scrollbar z-[9999]"
+     >
+     
+          {list.length === 0 && (
+            <li className="px-3 py-2 text-sm text-[#DFE0E2]/70 select-none">
+              {locale === "ar" ? "لا توجد فئات" : "No categories"}
+            </li>
+          )}
+          {list.map((opt, idx) => {
+            const active = selected?.value === opt.value;
+            const focused = idx === focusIndex;
+            return (
+              <li
+                key={opt.id ?? opt.value ?? idx}
+                role="option"
+                aria-selected={active}
+                onMouseEnter={() => setFocusIndex(idx)}
+                onClick={() => onSelect(opt)}
+                className={`px-3 py-2 text-sm cursor-pointer text-[#DFE0E2]
+                ${active ? "bg-[#239FBF]/25" : ""} ${focused ? "bg-white/10" : ""} hover:bg-white/10`}
+              >
+                {opt.label}
               </li>
-            )}
-            {list.map((opt, idx) => {
-              const active = selected?.value === opt.value;
-              const focused = idx === focusIndex;
-              return (
-                <li
-                  key={opt.id ?? opt.value ?? idx}
-                  role="option"
-                  aria-selected={active}
-                  onMouseEnter={() => setFocusIndex(idx)}
-                  onClick={() => onSelect(opt)}
-                  className={`px-3 py-2 text-sm cursor-pointer text-[#DFE0E2]
-                  ${active ? "bg-[#239FBF]/25" : ""} ${focused ? "bg-white/10" : ""} hover:bg-white/10`}
-                >
-                  {opt.label}
-                </li>
-              );
-            })}
-          </ul>,
-          document.body
-        )}
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 };

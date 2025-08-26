@@ -11,7 +11,7 @@ const config: Config = {
   darkMode: "class",
   theme: {
     fontFamily: {
-      "euclid-circular-a": ["Euclid Circular A"],
+      "euclid-circular-a": ["Noto Kufi Arabic"],
     },
     container: {
       center: true,

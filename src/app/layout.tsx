@@ -16,6 +16,13 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} dir={isRtl ? "rtl" : "ltr"} suppressHydrationWarning>
+      <head>
+      <link
+  href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;700&display=swap"
+  rel="stylesheet"
+/>
+
+      </head>
       <body className={isRtl ? "rtl" : "ltr"}>{children}</body>
     </html>
   );

@@ -79,12 +79,14 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed left-0 top-0 w-full z-50 transition-all duration-300 ${
-        stickyMenu ? "bg-[#0C2756]/95 shadow-lg" : "bg-[#0C2756]"
-      }`}
-    >
+  className={`fixed left-0 top-0 w-full z-40 transition-all duration-300 ${
+    stickyMenu ? "bg-[#0C2756]/95 shadow-lg" : "bg-[#0C2756]"
+  }`}
+>
+
+  
       {/* Animated Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0C2756] via-[#0F355F] to-[#0C2756] animate-[gradientMove_8s_ease-in-out_infinite]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0C2756] via-[#0F355F] to-[#0C2756] animate-[gradientMove_8s_ease-in-out_infinite] z-0" />
 
       <div className="relative max-w-[1170px] mx-auto px-4 sm:px-7 xl:px-0 flex flex-col lg:flex-row items-center justify-between py-4">
         {/* Logo */}
@@ -112,24 +114,39 @@ const Header = () => {
 
         </Link>
 
-        {/* Search Bar */}
-        <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-3 py-2 mt-4 lg:mt-0 w-full lg:max-w-xl">
-          {locale === "en" && <CustomSelect options={options} isLoading={categoriesLoading} />}
-          <input
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            type="search"
-            placeholder={t("searchPlaceholder")}
-            className="flex-1 bg-transparent outline-none text-white placeholder-white/60 px-3"
-          />
-          <button className="p-2 hover:bg-[#239FBF]/20 rounded-full transition">
-            <svg width="18" height="18" fill="none" stroke="#DFE0E2" strokeWidth="2" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-          </button>
-          {locale === "ar" && <CustomSelect options={options} isLoading={categoriesLoading} />}
-        </div>
+       {/* Search Bar */}
+<div
+  className={`flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-2 mt-4 lg:mt-0 w-full lg:max-w-xl border border-white/20 hover:border-[#239FBF] transition-all ${
+    locale === "ar" ? "flex-row-reverse" : ""
+  }`}
+>
+  {/* الفئات */}
+  <CustomSelect options={options} isLoading={categoriesLoading} />
+
+  {/* Input */}
+  <input
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+    type="search"
+    placeholder={t("searchPlaceholder")}
+    className="flex-1 bg-transparent outline-none text-white placeholder-white/70 px-3 text-sm"
+  />
+
+  {/* أيقونة البحث */}
+  <button className="p-2 hover:bg-[#239FBF]/20 rounded-full transition flex-shrink-0">
+    <svg
+      width="18"
+      height="18"
+      fill="none"
+      stroke="#DFE0E2"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+    >
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  </button>
+</div>
 
         {/* Right Section */}
         <div className="flex items-center gap-6 mt-4 lg:mt-0">

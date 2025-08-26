@@ -1,19 +1,17 @@
+"use client";
 import React, { useState } from "react";
 import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
-
 import {
   removeItemFromCart,
   updateCartItemQuantity,
 } from "@/redux/features/cart-slice";
-
 import Image from "next/image";
 import { Link } from "@/app/i18n/navigation";
 import { useLocale } from "next-intl";
 
 const SingleItem = ({ item }) => {
   const [quantity, setQuantity] = useState(item.quantity);
-
   const dispatch = useDispatch<AppDispatch>();
   const locale = useLocale();
 
@@ -33,108 +31,88 @@ const SingleItem = ({ item }) => {
     }
   };
 
-  // تحديد الصورة بشكل آمن
-let imageSrc = "/images/placeholder.png"; // الصورة الافتراضية
-
-if (item.imgs && Array.isArray(item.imgs.thumbnails)) {
-  const firstImg = item.imgs.thumbnails[0];
-  if (firstImg && firstImg.trim() !== "") {
-    imageSrc = firstImg;
+  // صورة المنتج
+  let imageSrc = "/images/placeholder.png";
+  if (item.imgs && Array.isArray(item.imgs.thumbnails)) {
+    const firstImg = item.imgs.thumbnails[0];
+    if (firstImg && firstImg.trim() !== "") {
+      imageSrc = firstImg;
+    }
   }
-}
 
   return (
-    <div className="flex items-center border-t border-gray-3 py-5 px-7.5">
+    <div className="flex items-center border-t border-white/20 py-6 px-7.5 text-white bg-[#0C2756]/70 rounded-2xl mb-4 shadow-lg">
       {/* المنتج */}
-      <div className="min-w-[400px]">
-        <div className="flex items-center justify-between gap-5">
-          <div className="w-full flex items-center gap-5.5">
-            {/* الصورة */}
-            <div className="flex items-center justify-center rounded-[8px] bg-gray-2 max-w-[120px] w-full h-32 overflow-hidden">
-            <Image
-  width={140}
-  height={140}
-  src={imageSrc}
-  alt={item.title || "Placeholder"}
-  className="object-contain"
-/>
+      <div className="min-w-[320px] flex items-center gap-5">
+        {/* الصورة */}
+        <div className="flex items-center justify-center rounded-xl bg-[#0f2f66] max-w-[100px] w-full h-28 overflow-hidden shadow-md">
+          <Image
+            width={120}
+            height={120}
+            src={imageSrc}
+            alt={item.title || "Placeholder"}
+            className="object-contain"
+          />
+        </div>
 
-            </div>
-
-            {/* العنوان */}
-            <div>
-              <h3 className="text-[#0C2756] font-bold text-base transition-colors duration-200 hover:text-blue-600">
-                <Link href={`/shop-details?id=${item.id}`}>
-                  {item.title}
-                </Link>
-              </h3>
-            </div>
-          </div>
+        {/* العنوان */}
+        <div>
+          <h3 className="text-white font-bold text-base hover:text-[#239FBF] transition-colors">
+            <Link href={`/shop-details?id=${item.id}`}>
+              {item.title}
+            </Link>
+          </h3>
         </div>
       </div>
 
       {/* السعر */}
-      <div className="min-w-[180px]">
-        <p className="text-dark">${item.discountedPrice}</p>
+      <div className="min-w-[150px] text-center">
+        <p className="text-[#239FBF] font-semibold">
+          ${item.discountedPrice}
+        </p>
       </div>
 
       {/* الكمية */}
-      <div className="min-w-[275px]">
-        <div className="w-max flex items-center rounded-md border border-gray-3">
+      <div className="min-w-[220px] flex justify-center">
+        <div className="flex items-center rounded-full border border-white/20 bg-[#0f2f66] overflow-hidden">
           <button
             onClick={handleDecreaseQuantity}
-            aria-label="button for remove product"
-            className="flex items-center justify-center w-11.5 h-11.5 transition-colors duration-200 hover:text-blue"
+            aria-label="decrease product"
+            className="w-10 h-10 flex items-center justify-center hover:bg-[#239FBF] hover:text-[#0C2756] transition rounded-full"
           >
-            <svg
-              className="fill-current"
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M3.333 10c0-.46.373-.833.833-.833h11.667c.46 0 .833.373.833.833s-.373.833-.833.833H4.166A.833.833 0 0 1 3.333 10Z" />
-            </svg>
+            −
           </button>
 
-          <span className="flex items-center justify-center w-16 h-11.5 border-x border-gray-4">
-            {quantity}
-          </span>
+          <span className="w-14 text-center font-bold">{quantity}</span>
 
           <button
             onClick={handleIncreaseQuantity}
-            aria-label="button for add product"
-            className="flex items-center justify-center w-11.5 h-11.5 transition-colors duration-200 hover:text-blue"
+            aria-label="increase product"
+            className="w-10 h-10 flex items-center justify-center hover:bg-[#239FBF] hover:text-[#0C2756] transition rounded-full"
           >
-            <svg
-              className="fill-current"
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M10 3.333c.46 0 .833.373.833.833v5h5a.833.833 0 1 1 0 1.667h-5v5a.833.833 0 1 1-1.667 0v-5h-5a.833.833 0 1 1 0-1.667h5v-5c0-.46.373-.833.834-.833Z" />
-            </svg>
+          + 
           </button>
         </div>
       </div>
 
       {/* المجموع */}
-      <div className="min-w-[200px]">
-        <p className="text-dark">${item.discountedPrice * quantity}</p>
+      <div className="min-w-[160px] text-center">
+        <p className="text-[#239FBF] font-semibold">
+          ${item.discountedPrice * quantity}
+        </p>
       </div>
 
       {/* زرار الحذف */}
-      <div className="min-w-[50px] flex justify-end">
+      <div className="min-w-[60px] flex justify-end">
         <button
           onClick={handleRemoveFromCart}
-          aria-label="button for remove product from cart"
-          className="flex items-center justify-center rounded-lg max-w-[38px] w-full h-9.5 bg-gray-2 border border-gray-3 text-dark transition-colors duration-200 hover:bg-red-light-6 hover:border-red-light-4 hover:text-red"
+          aria-label="remove product"
+          className="flex items-center justify-center rounded-full w-10 h-10 bg-red-600/80 hover:bg-red-500 transition shadow-md"
         >
           <svg
-            className="fill-current"
-            width="22"
-            height="22"
+            className="fill-white"
+            width="18"
+            height="18"
             viewBox="0 0 22 22"
             xmlns="http://www.w3.org/2000/svg"
           >

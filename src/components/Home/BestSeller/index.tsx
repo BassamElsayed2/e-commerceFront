@@ -80,10 +80,10 @@ const BestSeller = () => {
           )}
         </div>
 
-        <div className="text-center mt-12.5 mb-5">
+        <div className="text-center mt-12.5 mb-15">
           <Link
             href={`/${locale}/shop-without-sidebar`}
-            className="p-2 rounded-full border border-[#239FBF] hover:bg-[#239FBF] hover:text-white transition"
+            className="p-2 rounded-full border border-[#239FBF] hover:bg-[#239FBF] hover:text-white transition "
           >
             {locale === "ar" ? "عرض الكل" : "View All"}
           </Link>

@@ -42,8 +42,10 @@ const SingleListItem = ({ item }: { item: Product }) => {
       stock: item.stock,
       attributes: item.attributes || [],
     };
+  
     dispatch(updateproductDetails(productDetails));
   };
+  
 
   const handleAddToCart = () => {
     const cartItem = {
